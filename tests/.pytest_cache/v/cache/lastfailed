@@ -1,4 +1,0 @@
-{
-  "test-aws-boto3.py::TestS3Manager": true,
-  "test-aws-boto3.py::TestS3Manager::test_delete_file": true
-}
