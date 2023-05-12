@@ -1,0 +1,19 @@
+[
+  "test-aws-boto3.py::TestS3Manager::test_create_bucket",
+  "test-aws-boto3.py::TestS3Manager::test_create_folder",
+  "test-aws-boto3.py::TestS3Manager::test_delete_bucket",
+  "test-aws-boto3.py::TestS3Manager::test_delete_file",
+  "test-aws-boto3.py::TestS3Manager::test_list_buckets",
+  "test-aws-boto3.py::TestS3Manager::test_list_files",
+  "test-aws-boto3.py::TestS3Manager::test_list_folders",
+  "test-aws-boto3.py::test_check_file_exists_in_bucket",
+  "test-aws-boto3.py::test_create_bucket",
+  "test-aws-boto3.py::test_create_instance_rds",
+  "test-aws-boto3.py::test_delete_instance",
+  "test-aws-boto3.py::test_download_file",
+  "test-aws-boto3.py::test_list_buckets",
+  "test-aws-boto3.py::test_list_files_in_bucket",
+  "test-aws-boto3.py::test_list_instance",
+  "test-aws-boto3.py::test_rename_file_bucket",
+  "test-aws-boto3.py::test_upload_file"
+]
