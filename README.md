@@ -1,4 +1,4 @@
-[/b]AWS-Boto3-IAC[/b]
+AWS-Boto3-IAC
 
 Esse projeto tem como objetivo criar recursos da AWS utilizando a biblioteca Boto3.
 
