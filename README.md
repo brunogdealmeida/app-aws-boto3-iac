@@ -1,6 +1,6 @@
-AWS-Boto3-IAC
+[/b]AWS-Boto3-IAC[/b]
 
-Esse projeto tem como objetivo provisionar recursos da AWS utilizando a biblioteca Boto3.
+Esse projeto tem como objetivo criar recursos da AWS utilizando a biblioteca Boto3.
 
 Dentre das várias funções que podem ser exeuctadas na AWS algumas já foram implementadas, como:
 
