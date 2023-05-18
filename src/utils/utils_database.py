@@ -53,7 +53,6 @@ class RDSConnector:
             cursor.execute(f"CREATE DATABASE {db_name}")
             conn.commit()
         except Exception as e:
-            print("Couldn't create database")
             raise
         finally:
             conn.close()
@@ -69,7 +68,6 @@ class RDSConnector:
             cursor.execute(f"DROP DATABASE {db_name}")
             conn.commit()
         except Exception as e:
-            print("Couldn't delete database")
             raise
         finally:
             conn.close()
