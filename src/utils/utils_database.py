@@ -1,26 +1,73 @@
 import boto3
 import pymysql
 
-class RDSConnector:
+class DatabaseConnector:
 
-    def __init__(self, rds_host, username, password, db_name):
-        self.rds_hot = rds_host
+    def __init__(self, host, port, username, password, db_name):
+        self.host = host
+        self.port = port
         self.username = username
         self.password = password
         self.db_name = db_name
 
-    def connect(self, engine_db):
-        engine = {
-                'mysql':'pymysql.connect(self.rds_host, user=self.name, passwd=self.password, db=self.db_name, connect_timeout=5)'
-                 }
-        conn = engine[engine_db]
+    def _connect(self):
+        """
+        Intern method , connect to MySQL RDS
+        :param : Username, password and DB name
+        :return : True or False
+        """
+        conn = pymysql.connect(
+                            host=self.host, 
+                            user=self.username, 
+                            password=self.password, 
+                            connect_timeout=60
+                            )
         return conn
     
-    def execute_sql(self, sql):
+    def create_database(self, new_database_name):
+        """
+        Creates a new database
+        :param : New DB Name
+        :return: database connection 
+        """
         try:
-            conn = self.connect()
+            conn = self._connect()
             with conn.cursor() as cursor:
-                cursor.execute(sql)
+                cursor.execute(f'''CREATE DATABASE IF NOT EXISTS {new_database_name}''')
+                conn.commit()
+        except Exception as e:
+            raise
+        else:
+            conn.close()
+            
+
+    def delete_database(self, database_name):
+        """
+        Delete database
+        :param : DB name
+        :return : True or False 
+        """
+        try:
+            with self._connect as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(f'DROP DATABASE IF EXISTS {database_name}')
+                    conn.commit()
+            return True
+        except Exception as e:
+            raise
+        else:
+            return False
+    
+    def execute_query(self, sql_query):
+        """
+        Execute Query SQL
+        :param : SQL Query (Update, Delete)
+        :return : True or False
+        """
+        try:
+            conn = self._connect()
+            with conn.cursor() as cursor:
+                cursor.execute(sql_query)
                 conn.commit()
             conn.close()
             return True
@@ -29,44 +76,19 @@ class RDSConnector:
         else:
             return False
         
-    def select_sql(self, sql):
+    def execute_query_select(self, sql_query_select):
+        """
+        Execute Query SQL
+        :param : SQL Query (Select)
+        :return : True or False
+        """
         try:
-            conn = self.connect()
+            conn = self._connect()
             with conn.cursor() as cursor:
-                cursor.execute(sql)
+                cursor.execute(sql_query_select)
                 result = cursor.fetchone()
             conn.close()
             return result
-        except Exception as e:
-            raise
-        else:
-            return None
-        
-    def create_database(self, db_name):
-        """
-        Creates a new database in the RDS instance
-        """
-        try:
-            conn = pymysql.connect(
-                host=self.rds_host, user=self.user, password=self.password, port=self.port)
-            cursor = conn.cursor()
-            cursor.execute(f"CREATE DATABASE {db_name}")
-            conn.commit()
-        except Exception as e:
-            raise
-        finally:
-            conn.close()
-
-    def delete_database(self, db_name):
-        """
-        Deletes a database from the RDS instance
-        """
-        try:
-            conn = pymysql.connect(
-                host=self.rds_host, user=self.user, password=self.password, port=self.port)
-            cursor = conn.cursor()
-            cursor.execute(f"DROP DATABASE {db_name}")
-            conn.commit()
         except Exception as e:
             raise
         finally:
@@ -74,32 +96,38 @@ class RDSConnector:
 
     def grant_privileges(self, username, password, db_name):
         """
-        Grants privileges to a user on a specific database
+        Grant privileges to user
+        :param : Username, password and DB name
+        :return : True or False
         """
         try:
-            conn = pymysql.connect(
-                host=self.rds_host, user=self.user, password=self.password, port=self.port)
-            cursor = conn.cursor()
-            cursor.execute(f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{username}'@'%' IDENTIFIED BY '{password}'")
-            conn.commit()
+            conn = self._connect()
+            with conn.cursor() as cursor:
+                cursor.execute(f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{username}'@'%' IDENTIFIED BY '{password}'")
+                conn.commit()
+            return True
         except Exception as e:
-            print("Couldn't grant privileges")
+            print("Não foi possível dar acesso.")
             raise
-        finally:
-            conn.close()
+        else: 
+            return False
 
     def revoke_privileges(self, username, db_name):
         """
         Revokes privileges from a user on a specific database
+        :param : Username, password and DB name
+        :return : True or False
         """
         try:
-            conn = pymysql.connect(
-                host=self.rds_host, user=self.user, password=self.password, port=self.port)
-            cursor = conn.cursor()
-            cursor.execute(f"REVOKE ALL PRIVILEGES ON {db_name}.* FROM '{username}'@'%'")
-            conn.commit()
+            conn = self._connect()
+            with conn.cursor() as cursor:
+                cursor.execute(f"REVOKE ALL PRIVILEGES ON {db_name}.* FROM '{username}'@'%'")
+                conn.commit()
+            return True
         except Exception as e:
-            print("Couldn't revoke privileges")
+            print("Não foi possível revogar os privilégios.")
             raise
+        else:
+            return False
         finally:
             conn.close()
